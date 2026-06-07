@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: stralingsspel-frontend
+    env: static
+    rootDir: Stralingsspel-Multiplayer/artifacts/stralingsspel
+    buildCommand: pnpm install --no-frozen-lockfile && pnpm run build
+    staticPublishPath: dist
