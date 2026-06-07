@@ -7,7 +7,7 @@ export function useSocket() {
   const [connected, setConnected] = useState(false);
 
   useEffect(() => {
-    const s = io({
+    const s = io("https://s-060w.onrender.com", {
       path: "/socket.io",
       transports: ["websocket", "polling"],
     });
