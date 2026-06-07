@@ -1,0 +1,616 @@
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;500;600&display=swap');
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --g:#39FF14;--y:#FFE000;--r:#FF2020;--b:#00BFFF;--o:#FF6B00;
+  --bg:#0a0f0a;--panel:#111a11;--border:#2a4a2a;--txt:#c8e6c9;--dim:#4a7a4a;
+}
+body{background:var(--bg);color:var(--txt);font-family:'Exo 2',sans-serif;}
+#app{padding:12px;min-height:100vh;}
+.screen{display:none;}.screen.active{display:block;}
+#game.active{display:flex;flex-direction:column;gap:10px;}
+
+h1{font-family:'Orbitron',mono;font-size:22px;font-weight:900;color:var(--g);text-shadow:0 0 16px #39FF1455;line-height:1.2;}
+.haz{font-size:36px;display:block;animation:spin 8s linear infinite;margin-bottom:8px;}
+@keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+.logo{font-family:'Orbitron',mono;font-size:9px;color:var(--dim);letter-spacing:3px;margin-bottom:6px;}
+.sub{font-size:11px;color:var(--dim);letter-spacing:2px;margin-bottom:16px;}
+
+.card{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:16px;max-width:480px;margin:0 auto 14px;}
+.card h2{font-family:'Orbitron',mono;font-size:12px;color:var(--y);margin-bottom:12px;letter-spacing:1px;}
+
+.btn{font-family:'Orbitron',mono;font-size:10px;letter-spacing:1px;padding:9px 18px;border-radius:6px;border:1px solid;cursor:pointer;transition:all .15s;display:inline-block;}
+.bg{background:#39FF1422;border-color:var(--g);color:var(--g);}.bg:hover{background:#39FF1444;}
+.by{background:#FFE00022;border-color:var(--y);color:var(--y);}.by:hover{background:#FFE00044;}
+.br{background:#FF202022;border-color:var(--r);color:var(--r);}.br:hover{background:#FF202044;}
+.bb{background:#00BFFF22;border-color:var(--b);color:var(--b);}.bb:hover{background:#00BFFF44;}
+.bsm{padding:5px 12px;font-size:9px;}
+.btn:disabled{opacity:.3;cursor:not-allowed;}
+
+input[type=text]{background:#0a150a;border:1px solid var(--border);border-radius:6px;padding:8px 12px;color:var(--txt);font-family:'Exo 2',sans-serif;font-size:14px;outline:none;width:100%;margin-bottom:8px;}
+input[type=text]:focus{border-color:var(--g);}
+input::placeholder{color:var(--dim);}
+
+.code-display{font-family:'Orbitron',mono;font-size:28px;color:var(--g);text-align:center;padding:14px;background:#39FF1411;border:2px solid var(--g);border-radius:10px;letter-spacing:6px;margin:10px 0;}
+.code-hint{font-size:11px;color:var(--dim);text-align:center;margin-bottom:10px;}
+
+.topbar{display:flex;justify-content:space-between;align-items:center;background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:7px 12px;}
+.ri{font-family:'Orbitron',mono;font-size:10px;color:var(--g);}
+.cp{font-family:'Orbitron',mono;font-size:11px;color:var(--y);}
+.sbar{display:flex;gap:5px;flex-wrap:wrap;}
+.chip{background:var(--panel);border:1px solid var(--border);border-radius:20px;padding:3px 10px;font-size:11px;display:flex;gap:5px;align-items:center;}
+.chip .pn{color:var(--dim);font-size:11px;}
+.chip .pt{font-family:'Orbitron',mono;color:var(--g);font-size:12px;}
+.chip .pt.neg{color:var(--r);}
+.chip.active{border-color:var(--y);}
+.chip.me{border-color:var(--b);}
+
+.czone{display:flex;flex-direction:column;align-items:center;gap:12px;}
+.darea{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
+.dstack{text-align:center;}
+.dcard{width:82px;height:114px;border-radius:9px;border:2px solid;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;transition:transform .15s;position:relative;}
+.dcard.clickable{cursor:pointer;}.dcard.clickable:hover{transform:translateY(-3px);}
+.dcard::before{content:'';position:absolute;top:3px;left:-3px;right:3px;bottom:-3px;border-radius:9px;border:1px solid;opacity:.2;z-index:-1;}
+.dv{border-color:var(--b);background:#00BFFF0a;}.dv::before{border-color:var(--b);}
+.db{border-color:var(--g);background:#39FF140a;}.db::before{border-color:var(--g);}
+.dr{border-color:var(--r);background:#FF20200a;}.dr::before{border-color:var(--r);}
+.dk{border-color:var(--y);background:#FFE0000a;}.dk::before{border-color:var(--y);}
+.dlbl{font-family:'Orbitron',mono;font-size:7px;letter-spacing:1px;margin-top:4px;}
+.dcnt{font-family:'Orbitron',mono;font-size:10px;}
+.dico{font-size:20px;}
+
+.acwrap{width:100%;max-width:500px;}
+.ac{border-radius:12px;border:2px solid;padding:14px;display:flex;flex-direction:column;gap:9px;animation:cin .3s ease;}
+@keyframes cin{from{transform:scale(.92);opacity:0}to{transform:scale(1);opacity:1}}
+.ac.vraag{border-color:var(--b);background:#00BFFF08;}
+.ac.bonus{border-color:var(--g);background:#39FF1408;}
+.ac.risico{border-color:var(--r);background:#FF202008;}
+.ac.kennis{border-color:var(--y);background:#FFE00008;}
+
+.badge{font-family:'Orbitron',mono;font-size:8px;letter-spacing:2px;padding:2px 8px;border-radius:20px;border:1px solid;display:inline-block;}
+.badge.vraag{border-color:var(--b);color:var(--b);background:#00BFFF18;}
+.badge.bonus{border-color:var(--g);color:var(--g);background:#39FF1418;}
+.badge.risico{border-color:var(--r);color:var(--r);background:#FF202018;}
+.badge.kennis{border-color:var(--y);color:var(--y);background:#FFE00018;}
+
+.cq{font-size:14px;font-weight:500;line-height:1.5;color:#e0f0e0;}
+.aopts{display:flex;flex-direction:column;gap:5px;}
+.abtn{background:#0a1a0a;border:1px solid var(--border);border-radius:6px;padding:8px 12px;text-align:left;color:var(--txt);font-family:'Exo 2',sans-serif;font-size:13px;cursor:pointer;transition:all .15s;}
+.abtn:hover:not(:disabled){border-color:var(--b);background:#00BFFF0d;}
+.abtn.correct{border-color:var(--g);background:#39FF1418;color:var(--g);}
+.abtn.wrong{border-color:var(--r);background:#FF202018;color:var(--r);}
+.abtn:disabled{cursor:default;}
+.fb{font-family:'Orbitron',mono;font-size:11px;padding:7px;border-radius:6px;text-align:center;}
+.fb.ok{background:#39FF1418;color:var(--g);border:1px solid var(--g);}
+.fb.fail{background:#FF202018;color:var(--r);border:1px solid var(--r);}
+.nbw{text-align:center;margin-top:4px;}
+.ktxt{font-size:13px;color:var(--dim);line-height:1.5;background:#FFE00008;border:1px solid #FFE00020;border-radius:6px;padding:10px;}
+.rchoice{background:#0a1a0a;border:1px solid var(--border);border-radius:6px;padding:8px 12px;text-align:left;color:var(--txt);font-size:12px;cursor:pointer;transition:all .15s;width:100%;margin-bottom:4px;}
+.rchoice:hover:not(:disabled){border-color:var(--o);background:#FF6B000a;}
+.rchoice:disabled{cursor:default;}
+
+.viewer-msg{font-family:'Orbitron',mono;font-size:10px;color:var(--dim);text-align:center;padding:10px;border:1px solid var(--border);border-radius:8px;margin-top:6px;}
+.pulse{animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:.4}50%{opacity:1}}
+
+#winner{text-align:center;padding:30px 12px;}
+.wtitle{font-family:'Orbitron',mono;font-size:24px;font-weight:900;color:var(--y);margin-bottom:6px;}
+.wname{font-family:'Orbitron',mono;font-size:18px;color:var(--g);margin-bottom:18px;}
+.fscores{display:flex;flex-direction:column;gap:6px;max-width:280px;margin:0 auto 18px;}
+.frow{display:flex;justify-content:space-between;align-items:center;background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:8px 14px;}
+.frow.first{border-color:var(--y);}
+.fn{font-size:13px;}
+.fp{font-family:'Orbitron',mono;font-size:13px;color:var(--g);}
+
+.lobby-center{text-align:center;}
+.or-divider{display:flex;align-items:center;gap:10px;margin:12px 0;color:var(--dim);font-size:12px;}
+.or-divider::before,.or-divider::after{content:'';flex:1;height:1px;background:var(--border);}
+.prow{display:flex;gap:6px;align-items:center;margin-bottom:6px;}
+.pnum{font-family:'Orbitron',mono;font-size:10px;color:var(--dim);width:18px;}
+.status-dot{width:8px;height:8px;border-radius:50%;background:var(--g);display:inline-block;margin-right:5px;animation:pulse 1.5s infinite;}
+</style>
+
+<h2 class="sr-only">Straling Kaartspel Multiplayer — Nova Max 3B Hoofdstuk 6</h2>
+<div id="app">
+
+<!-- LOBBY -->
+<div id="lobby" class="screen active">
+  <div class="lobby-center">
+    <span class="haz">☢</span>
+    <div class="logo">NOVA MAX 3B · H6 · §1 §3 §4</div>
+    <h1>STRALINGSSPEL</h1>
+    <div class="sub">multiplayer · 3–5 spelers</div>
+  </div>
+
+  <div class="card">
+    <h2>★ HOST: NIEUW SPEL STARTEN</h2>
+    <div id="host-player-inputs"></div>
+    <div style="display:flex;gap:6px;margin-bottom:10px;">
+      <button class="btn bg bsm" id="addbtn">+ speler</button>
+      <button class="btn br bsm" id="rembtn">− speler</button>
+    </div>
+    <button class="btn bg" id="createbtn" style="width:100%">☢ SPEL AANMAKEN</button>
+  </div>
+
+  <div class="or-divider">OF</div>
+
+  <div class="card">
+    <h2>▶ MEEDOEN MET SPELCODE</h2>
+    <input type="text" id="join-name" placeholder="Jouw naam (optioneel)">
+    <input type="text" id="join-code" placeholder="Spelcode (bijv. ATOM42)" style="text-transform:uppercase;letter-spacing:2px;font-family:Orbitron,monospace;font-size:16px;">
+    <button class="btn bb" id="joinbtn" style="width:100%;margin-top:4px">▶ MEEDOEN</button>
+    <div id="join-err" style="color:var(--r);font-size:12px;margin-top:6px;text-align:center;"></div>
+  </div>
+</div>
+
+<!-- WAITING ROOM -->
+<div id="waiting" class="screen">
+  <div class="card" style="text-align:center;">
+    <h2>☢ SPELCODE — DEEL DIT MET IEDEREEN</h2>
+    <div class="code-display" id="show-code">----</div>
+    <div class="code-hint">Anderen voeren deze code in om mee te doen</div>
+    <div id="waiting-players" style="margin-bottom:12px;"></div>
+    <button class="btn bg" id="launch-btn" style="width:100%">▶ SPEL BEGINNEN</button>
+    <div style="font-size:11px;color:var(--dim);margin-top:8px;">Wacht tot iedereen is ingelogd, druk dan op starten</div>
+  </div>
+</div>
+
+<!-- VIEWER WAITING -->
+<div id="viewer-wait" class="screen">
+  <div class="card" style="text-align:center;">
+    <h2>☢ VERBONDEN</h2>
+    <div class="code-display" id="vw-code">----</div>
+    <div class="code-hint">Wachten tot de host het spel start...</div>
+    <div id="vw-players"></div>
+    <div class="viewer-msg pulse">⏳ Host start het spel zo...</div>
+  </div>
+</div>
+
+<!-- GAME -->
+<div id="game" class="screen">
+  <div class="topbar">
+    <span class="ri" id="rinfo">RONDE 1</span>
+    <span class="cp" id="cplbl">...</span>
+    <div style="display:flex;gap:6px;align-items:center;">
+      <span class="status-dot"></span>
+      <button class="btn br bsm" id="endbtn">⏹</button>
+    </div>
+  </div>
+  <div class="sbar" id="sbar"></div>
+  <div class="czone">
+    <div class="darea" id="darea">
+      <div class="dstack">
+        <div class="dcard dv" id="dv"><span class="dico">❓</span><span style="font-size:7px;color:var(--b);font-family:Orbitron,mono">VRAAG</span><span class="dcnt" id="cv" style="color:var(--b)">-</span></div>
+        <div class="dlbl" style="color:var(--b)">VRAAG</div>
+      </div>
+      <div class="dstack">
+        <div class="dcard db" id="db"><span class="dico">⭐</span><span style="font-size:7px;color:var(--g);font-family:Orbitron,mono">BONUS</span><span class="dcnt" id="cb" style="color:var(--g)">-</span></div>
+        <div class="dlbl" style="color:var(--g)">BONUS</div>
+      </div>
+      <div class="dstack">
+        <div class="dcard dr" id="dr"><span class="dico">⚠</span><span style="font-size:7px;color:var(--r);font-family:Orbitron,mono">RISICO</span><span class="dcnt" id="cr" style="color:var(--r)">-</span></div>
+        <div class="dlbl" style="color:var(--r)">RISICO</div>
+      </div>
+      <div class="dstack">
+        <div class="dcard dk" id="dk"><span class="dico">☢</span><span style="font-size:7px;color:var(--y);font-family:Orbitron,mono">KENNIS</span><span class="dcnt" id="ck" style="color:var(--y)">-</span></div>
+        <div class="dlbl" style="color:var(--y)">KENNIS</div>
+      </div>
+    </div>
+    <div class="acwrap" id="acwrap"></div>
+    <div id="viewer-note"></div>
+  </div>
+</div>
+
+<!-- WINNER -->
+<div id="winner" class="screen">
+  <div style="text-align:center;padding:24px 12px;">
+    <div class="wtitle">☢ GAME OVER ☢</div>
+    <div style="font-size:10px;color:var(--dim);margin-bottom:4px;font-family:Orbitron,mono;letter-spacing:2px;">WINNAAR</div>
+    <div class="wname" id="wname"></div>
+    <div class="fscores" id="fscores"></div>
+    <button class="btn bg" onclick="goHome()" style="font-size:11px;padding:10px 24px;">↩ NIEUW SPEL</button>
+  </div>
+</div>
+</div>
+
+<script>
+const CARDS={
+vraag:[
+  {q:"Wat is een golflengte?",opts:["De afstand tussen twee golftoppen","De hoogte van een golf","Het aantal golven per seconde","De snelheid van een golf"],ans:0,pts:2},
+  {q:"Hoe snel reist elektromagnetische straling door vacuüm?",opts:["300.000 km/s","150.000 km/s","1.000 km/s","De snelheid hangt af van golflengte"],ans:0,pts:2},
+  {q:"Welke straling heeft de kortste golflengte?",opts:["Röntgenstraling","Zichtbaar licht","Infraroodstraling","Radiogolven"],ans:0,pts:2},
+  {q:"Wat is de frequentie van een golf?",opts:["Aantal golven per seconde","Afstand tussen twee golftoppen","Hoogte van de golf","Snelheid van de golf"],ans:0,pts:2},
+  {q:"Welke kleur zichtbaar licht heeft de langste golflengte?",opts:["Rood","Violet","Groen","Geel"],ans:0,pts:2},
+  {q:"Wat betekent transmissie bij straling?",opts:["Straling wordt doorgelaten","Straling wordt weerkaatst","Straling wordt omgezet in warmte","Straling wordt opgeslagen"],ans:0,pts:2},
+  {q:"Wat betekent absorptie bij straling?",opts:["Straling wordt opgenomen en omgezet in energie","Straling gaat door het materiaal heen","Straling kaatst terug","Straling versnelt"],ans:0,pts:2},
+  {q:"Wat is reflectie?",opts:["Straling kaatst terug van het oppervlak","Straling wordt doorgeslikt","Straling vertraagt","Straling verandert van kleur"],ans:0,pts:2},
+  {q:"Infraroodstraling ervaren mensen als...",opts:["Warmte","Licht","Geluid","Trilling"],ans:0,pts:2},
+  {q:"De formule die golflengte, frequentie en lichtsnelheid verbindt is...",opts:["c = λ × f","c = λ + f","c = λ / f","c = f / λ"],ans:0,pts:3},
+  {q:"Als golflengte kleiner wordt, wordt frequentie...",opts:["Groter","Kleiner","Gelijk","Nul"],ans:0,pts:2},
+  {q:"Wat heb je nodig om een röntgenfoto te maken?",opts:["Röntgenbron en detectorscherm","Lamp en spiegel","Thermometer en camera","Microscoop"],ans:0,pts:2},
+  {q:"Waarom zijn botten wit op een röntgenfoto?",opts:["Botten absorberen veel röntgenstraling","Botten reflecteren licht","Botten zijn lichter dan spieren","Botten zenden straling uit"],ans:0,pts:2},
+  {q:"Waarom zijn zachte weefsels donker op een röntgenfoto?",opts:["Ze laten röntgenstraling grotendeels door","Ze absorberen alle straling","Ze zijn dikker dan botten","Ze reflecteren de straling"],ans:0,pts:2},
+  {q:"Röntgenstraling die geabsorbeerd wordt door weefsel kan...",opts:["Moleculen kapot maken","Botten sterker maken","Pijn verlichten","Bloed aanmaken"],ans:0,pts:2},
+  {q:"Hoe beschermen röntgentechnici zichzelf?",opts:["Afstand houden of achter loden muur staan","Zonnebril dragen","Handschoenen aantrekken","Bron uitzetten"],ans:0,pts:2},
+  {q:"Waarom is lood goed tegen röntgenstraling?",opts:["Lood absorbeert röntgenstraling goed","Lood is goedkoop","Lood is licht van gewicht","Lood reflecteert alle straling"],ans:0,pts:2},
+  {q:"Wat is een tracer (merkstof)?",opts:["Radioactieve stof ingespoten die gammastraling uitzendt","Kleurstof voor röntgenfoto's","Röntgenbron","Meetapparaat"],ans:0,pts:2},
+  {q:"Hoe werkt een gammacamera?",opts:["Vangt gammastraling op van tracer in lichaam","Schiet gammastraling in lichaam","Meet temperatuurverschillen","Meet geluidsgolven"],ans:0,pts:2},
+  {q:"Wat is het verschil tussen röntgenfoto en gammascan?",opts:["Röntgen: straling van buiten; gammascan: stof in lichaam zendt zelf","Ze zijn hetzelfde","Gammascan gebruikt lichtstraling","Röntgen meet alleen huid"],ans:0,pts:3},
+  {q:"Wat is een natuurlijk radioactieve stof?",opts:["Van nature radioactief, in natuur aanwezig","Door mensen radioactief gemaakt","Een laboratoriumstof","Een medicijn"],ans:0,pts:2},
+  {q:"Welke straling heeft een tracer die als gammascan gebruikt wordt?",opts:["Gammastraling","Zichtbaar licht","Infraroodstraling","Radiogolven"],ans:0,pts:2},
+  {q:"Röntgenstraling die dwars door lichaam gaat zonder absorptie...",opts:["Veroorzaakt geen schade","Beschadigt organen","Maakt botten zichtbaar","Wordt omgezet in warmte"],ans:0,pts:2},
+  {q:"Welke straling staat links van zichtbaar licht in het spectrum (kortere golflengte)?",opts:["Ultraviolet (UV)","Infrarood (IR)","Radiogolven","Microgolven"],ans:0,pts:2},
+  {q:"Elektromagnetische straling wordt gemaakt door...",opts:["Elektronen die trillen in antenne of atoom","Lucht die trilt","Magneten die draaien","Water dat stroomt"],ans:0,pts:2},
+  {q:"Wat staat in volgorde van kortste naar langste golflengte?",opts:["Gamma → röntgen → UV → licht → IR → radio","Radio → IR → licht → UV → röntgen → gamma","Licht → UV → gamma → radio → IR","UV → gamma → licht → IR → radio"],ans:0,pts:3},
+  {q:"Straling die geabsorbeerd wordt geeft energie af aan...",opts:["Moleculen in het materiaal","De lucht eromheen","Het detectorscherm","De röntgenbron"],ans:0,pts:2},
+  {q:"Wat is een kunstmatig radioactieve stof?",opts:["Door de mens radioactief gemaakt","Van nature radioactief","Straling blokkerend","Alleen in de zon voorkomend"],ans:0,pts:2},
+  {q:"Waarom kan gammastraling van een tracer buiten het lichaam gemeten worden?",opts:["Gammastraling heeft groot doordringvermogen","Gammastraling is zichtbaar","Het lichaam zendt het zelf uit","De huid vangt het op"],ans:0,pts:3},
+  {q:"Wat zie je op een röntgenfoto van een arm met een botbreuk?",opts:["Een witte lijn (breuk) in de witte botten","Zwarte lijn in zwarte botten","Rode vlek op het scherm","Niets, botten zijn onzichtbaar"],ans:0,pts:2},
+],
+bonus:[
+  {title:"Snelle denker!",desc:"Je beantwoordde de vraag meteen. +3 punten!",pts:3,act:"pts"},
+  {title:"Loodschort expert!",desc:"Jij weet hoe je jezelf beschermt. +2 punten!",pts:2,act:"pts"},
+  {title:"Spectrum kenner!",desc:"Je kent de volgorde van het EM-spectrum. +2 punten!",pts:2,act:"pts"},
+  {title:"Gammacamera pro!",desc:"Jij snapt hoe een gammascan werkt. +3 punten!",pts:3,act:"pts"},
+  {title:"Extra beurt!",desc:"Goed gedaan! Trek nog een gratis kaart!",pts:0,act:"extra"},
+  {title:"Stelen!",desc:"Kies een tegenstander om 2 punten van af te pakken.",pts:0,act:"steal2"},
+  {title:"Tracer gevonden!",desc:"+2 punten én de volgende speler verliest 1 punt.",pts:2,act:"steal1next"},
+  {title:"Gratis vraagkaart!",desc:"Trek een gratis vraagkaart nu.",pts:0,act:"extravraag"},
+],
+risico:[
+  {sit:"Je assistent vraagt of jij in de kamer blijft tijdens een röntgenfoto. Wat doe je?",c:["Weigeren en buiten wachten (veilig: +2 pt)","Blijven voor de gezelligheid (gok: 50/50 kans -3 of +4 pt)"],safe:0},
+  {sit:"Een klasgenoot zegt: 'Röntgenstraling en licht hebben niets gemeen.' Wat antwoord je?",c:["Corrigeren: beide zijn elektromagnetische straling (+2 pt)","Akkoord gaan (-1 pt)"],safe:0},
+  {sit:"Er staat een röntgenbron zonder behuizing op tafel. Wat doe je?",c:["Melden bij leraar en afstand houden (+2 pt)","Even snel kijken wat het is (-3 pt)"],safe:0},
+  {sit:"Een klasgenoot vraagt: 'Is röntgenstraling gevaarlijk?' Wat zeg je?",c:["Geabsorbeerde straling kan schade geven, kleine doses zijn doorgaans veilig (+2 pt)","Helemaal niet gevaarlijk (-2 pt)"],safe:0},
+  {sit:"Welke methode gebruik je om te zien hoe een orgaan functioneert?",c:["Gammascan met tracer, laat functie zien (+2 pt)","Röntgenfoto, want die is scherper (-1 pt)"],safe:0},
+  {sit:"De golflengte van een straling is 700 nm. Wat voor straling is dit?",c:["Rood zichtbaar licht (+2 pt)","Infraroodstraling (-1 pt)"],safe:0},
+],
+kennis:[
+  {fact:"Het EM-spectrum loopt van gammastraling (kortste golflengte) tot radiogolven (langste). Zichtbaar licht zit er precies tussenin!",bonus:"extravraag"},
+  {fact:"De lichtsnelheid is 3,0 × 10⁸ m/s in vacuüm — dat is 300.000 km per seconde! Alle elektromagnetische straling reist met deze snelheid.",bonus:"pt1"},
+  {fact:"Op een röntgenfoto zijn botten WIT (absorberen veel) en zachte weefsels DONKER (laten straling door = transmissie).",bonus:"pt2"},
+  {fact:"Een tracer zendt gammastraling uit vanuit het lichaam. Een gammacamera buiten het lichaam vangt die straling op en maakt er een beeld van.",bonus:"extravraag"},
+  {fact:"Transmissie = doorlaten · Reflectie = terugkaatsen · Absorptie = opnemen. Dit zijn de drie mogelijkheden als straling op een materiaal valt.",bonus:"pt1"},
+  {fact:"Formule: c = λ × f. Als golflengte (λ) kleiner wordt, wordt frequentie (f) groter. Röntgenstraling heeft hoge frequentie en korte golflengte.",bonus:"extrabonus"},
+  {fact:"Straling die geabsorbeerd wordt geeft energie af aan moleculen — die kunnen kapotgaan. Dat maakt röntgen- en gammastraling gevaarlijk bij grote doses.",bonus:"pt2"},
+  {fact:"Radioactieve stoffen kunnen NATUURLIJK zijn (altijd in de natuur aanwezig) of KUNSTMATIG (door de mens gemaakt).",bonus:"extravraag"},
+]
+};
+
+let gameCode='', isHost=false, myName='', myIdx=-1;
+let pollInterval=null;
+let localState=null;
+
+function genCode(){return Math.random().toString(36).substr(2,4).toUpperCase()+''+Math.floor(Math.random()*90+10);}
+function shuffle(a){let b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
+
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>{s.classList.remove('active');s.style.display='';});
+  const el=document.getElementById(id);el.classList.add('active');
+  if(id==='game')el.style.display='flex';
+}
+
+async function saveState(state){
+  try{await window.storage.set('game:'+gameCode, JSON.stringify(state), true);}catch(e){}
+}
+async function loadState(){
+  try{
+    const r=await window.storage.get('game:'+gameCode, true);
+    return r?JSON.parse(r.value):null;
+  }catch(e){return null;}
+}
+
+function buildInitialState(players){
+  return{
+    players:players.map(n=>({name:n,points:0})),
+    curP:0, round:1, inPlay:false,
+    decks:{
+      vraag:shuffle(CARDS.vraag.map((_,i)=>i)),
+      bonus:shuffle(CARDS.bonus.map((_,i)=>i)),
+      risico:shuffle(CARDS.risico.map((_,i)=>i)),
+      kennis:shuffle(CARDS.kennis.map((_,i)=>i))
+    },
+    activeCard:null,
+    cardType:null,
+    revealed:false,
+    chosenAnswer:null,
+    gameOver:false,
+    hostName:players[0],
+    joinedPlayers:players
+  };
+}
+
+let hostPlayers=[];
+function setupHostInputs(){
+  const c=document.getElementById('host-player-inputs');c.innerHTML='';
+  hostPlayers.forEach((p,i)=>{
+    const d=document.createElement('div');d.className='prow';
+    d.innerHTML=`<span class="pnum">${i+1}</span><input type="text" placeholder="Speler ${i+1}" value="${p}" oninput="hostPlayers[${i}]=this.value">`;
+    c.appendChild(d);
+  });
+  document.getElementById('rembtn').disabled=hostPlayers.length<=3;
+  document.getElementById('addbtn').disabled=hostPlayers.length>=5;
+}
+for(let i=0;i<3;i++)hostPlayers.push('');
+setupHostInputs();
+
+document.getElementById('addbtn').addEventListener('click',()=>{if(hostPlayers.length<5){hostPlayers.push('');setupHostInputs();}});
+document.getElementById('rembtn').addEventListener('click',()=>{if(hostPlayers.length>3){hostPlayers.pop();setupHostInputs();}});
+
+document.getElementById('createbtn').addEventListener('click',async()=>{
+  gameCode=genCode();
+  isHost=true;
+  const names=hostPlayers.map((n,i)=>n.trim()||`Speler ${i+1}`);
+  myName=names[0];myIdx=0;
+  const st=buildInitialState(names);
+  await saveState(st);
+  localState=st;
+  document.getElementById('show-code').textContent=gameCode;
+  renderWaitingPlayers(st.players);
+  showScreen('waiting');
+  startPoll('waiting');
+});
+
+document.getElementById('launch-btn').addEventListener('click',async()=>{
+  const st=await loadState();
+  if(!st)return;
+  st.started=true;
+  await saveState(st);
+  localState=st;
+  stopPoll();
+  startGame(st);
+});
+
+document.getElementById('joinbtn').addEventListener('click',async()=>{
+  const code=document.getElementById('join-code').value.trim().toUpperCase();
+  const name=document.getElementById('join-name').value.trim();
+  if(!code){document.getElementById('join-err').textContent='Voer een spelcode in.';return;}
+  gameCode=code;
+  const st=await loadState();
+  if(!st){document.getElementById('join-err').textContent='Spelcode niet gevonden. Controleer de code.';return;}
+  myName=name||'Kijker';
+  isHost=false;
+  myIdx=st.players.findIndex(p=>p.name===myName);
+  document.getElementById('vw-code').textContent=gameCode;
+  renderViewerPlayers(st.players);
+  showScreen('viewer-wait');
+  startPoll('viewer-wait');
+});
+
+function renderWaitingPlayers(players){
+  document.getElementById('waiting-players').innerHTML=players.map(p=>`<div style="font-size:12px;color:var(--dim);padding:3px 0"><span class="status-dot"></span>${p.name}</div>`).join('');
+}
+function renderViewerPlayers(players){
+  document.getElementById('vw-players').innerHTML=players.map(p=>`<div style="font-size:12px;color:var(--dim);padding:3px 0"><span class="status-dot"></span>${p.name}</div>`).join('');
+}
+
+function startPoll(waitScreen){
+  pollInterval=setInterval(async()=>{
+    const st=await loadState();
+    if(!st)return;
+    if(waitScreen==='waiting'){renderWaitingPlayers(st.players);}
+    if(waitScreen==='viewer-wait'){renderViewerPlayers(st.players);}
+    if(st.started&&waitScreen==='viewer-wait'){stopPoll();startGame(st);}
+    if(st.gameOver){stopPoll();showWinner(st);}
+  },2500);
+}
+
+function stopPoll(){clearInterval(pollInterval);pollInterval=null;}
+
+function startGame(st){
+  localState=st;
+  showScreen('game');
+  renderGame(st);
+  stopPoll();
+  pollInterval=setInterval(async()=>{
+    const st=await loadState();
+    if(!st)return;
+    if(JSON.stringify(st)!==JSON.stringify(localState)){localState=st;renderGame(st);}
+    if(st.gameOver){stopPoll();showWinner(st);}
+  },1500);
+  if(isHost){
+    document.getElementById('endbtn').addEventListener('click',async()=>{
+      const st=await loadState();if(!st)return;
+      st.gameOver=true;await saveState(st);stopPoll();showWinner(st);
+    });
+  }
+}
+
+function amHost(){return isHost;}
+
+function renderGame(st){
+  document.getElementById('rinfo').textContent=`RONDE ${st.round}`;
+  document.getElementById('cplbl').textContent=`${st.players[st.curP].name.toUpperCase()} AAN DE BEURT`;
+  document.getElementById('sbar').innerHTML=st.players.map((p,i)=>`<div class="chip ${i===st.curP?'active':''} ${i===myIdx?'me':''}"><span class="pn">${p.name}${i===myIdx?' (jij)':''}</span><span class="pt ${p.points<0?'neg':''}">${p.points>0?'+':''}${p.points}</span></div>`).join('');
+  ['vraag','bonus','risico','kennis'].forEach(t=>{
+    const key=t[0];
+    const cnt=document.getElementById('c'+key);if(cnt)cnt.textContent=st.decks[t].length;
+    const d=document.getElementById('d'+key);
+    if(d){
+      d.style.opacity=st.decks[t].length===0?'0.3':'1';
+      const canDraw=amHost()&&!st.inPlay&&st.decks[t].length>0;
+      d.className='dcard d'+key+(canDraw?' clickable':'');
+      d.onclick=canDraw?()=>hostDraw(t):null;
+    }
+  });
+  if(st.activeCard!==null){
+    renderActiveCard(st);
+  } else {
+    document.getElementById('acwrap').innerHTML='';
+  }
+  const vn=document.getElementById('viewer-note');
+  if(!amHost()&&!st.inPlay){
+    vn.innerHTML=`<div class="viewer-msg">Wacht — ${st.players[st.curP].name} trekt een kaart...</div>`;
+  } else {vn.innerHTML='';}
+}
+
+async function hostDraw(type){
+  let st=await loadState();if(!st||st.inPlay)return;
+  if(st.decks[type].length===0)return;
+  const idx=st.decks[type].shift();
+  st.activeCard=idx;
+  st.cardType=type;
+  st.inPlay=true;
+  st.revealed=false;
+  st.chosenAnswer=null;
+  st.pendingAction=null;
+  await saveState(st);localState=st;renderGame(st);
+}
+
+function renderActiveCard(st){
+  const w=document.getElementById('acwrap');
+  const t=st.cardType;
+  const idx=st.activeCard;
+  if(t==='vraag'){
+    const c=CARDS.vraag[idx];
+    const answered=st.chosenAnswer!==null;
+    w.innerHTML=`<div class="ac vraag">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <span class="badge vraag">❓ VRAAGKAART</span>
+        <span style="color:var(--g);font-family:Orbitron,mono;font-size:9px">+${c.pts} pt</span>
+      </div>
+      <div class="cq">${c.q}</div>
+      <div class="aopts">${c.opts.map((o,i)=>{
+        let cls='abtn';
+        if(answered){if(i===c.ans)cls+=' correct';else if(i===st.chosenAnswer&&i!==c.ans)cls+=' wrong';}
+        const dis=answered||!amHost()?'disabled':'';
+        return`<button class="${cls}" ${dis} onclick="hostAnswer(${i})">${String.fromCharCode(65+i)}. ${o}</button>`;
+      }).join('')}</div>
+      ${answered?`<div class="fb ${st.chosenAnswer===c.ans?'ok':'fail'}">${st.chosenAnswer===c.ans?'✓ GOED! +'+c.pts+' punt'+(c.pts!==1?'en':'')+'!':'✗ FOUT! -1 punt. Goed: '+String.fromCharCode(65+c.ans)}</div>`:''}
+      ${answered&&amHost()?`<div class="nbw"><button class="btn bg bsm" onclick="hostNext()">VOLGENDE ▸</button></div>`:''}
+      ${!amHost()&&answered?`<div class="viewer-msg">Host klikt op volgende...</div>`:''}
+    </div>`;
+  } else if(t==='bonus'){
+    const c=CARDS.bonus[idx];
+    const done=st.pendingAction==='done';
+    w.innerHTML=`<div class="ac bonus">
+      <span class="badge bonus">⭐ BONUSKAART</span>
+      <div class="cq" style="color:var(--g)">${c.title}</div>
+      <div style="font-size:12px;color:var(--dim);line-height:1.5">${c.desc}</div>
+      ${amHost()&&!done?`<div class="nbw"><button class="btn bg bsm" onclick="hostApplyBonus()">CLAIM ▸</button></div>`:''}
+      ${!amHost()?`<div class="viewer-msg">Host past bonus toe...</div>`:''}
+    </div>`;
+    if(done&&amHost()){setTimeout(()=>hostNext(),400);}
+  } else if(t==='risico'){
+    const c=CARDS.risico[idx];
+    const answered=st.chosenAnswer!==null;
+    w.innerHTML=`<div class="ac risico">
+      <span class="badge risico">⚠ RISICOKAART</span>
+      <div class="cq">${c.sit}</div>
+      <div style="display:flex;flex-direction:column;gap:5px;">${c.c.map((ch,i)=>{
+        const dis=answered||!amHost()?'disabled':'';
+        return`<button class="rchoice" ${dis} onclick="hostChooseR(${i})">${ch}</button>`;
+      }).join('')}</div>
+      ${answered?`<div class="fb ${st.risicoResult==='ok'?'ok':'fail'}">${st.risicoMsg}</div>`:''}
+      ${answered&&amHost()?`<div class="nbw"><button class="btn br bsm" onclick="hostNext()">VOLGENDE ▸</button></div>`:''}
+      ${!amHost()&&answered?`<div class="viewer-msg">Host klikt op volgende...</div>`:''}
+    </div>`;
+  } else if(t==='kennis'){
+    const c=CARDS.kennis[idx];
+    const done=st.pendingAction==='done';
+    const bonusMap={extravraag:'Trek een gratis vraagkaart!',extrabonus:'Trek een gratis bonuskaart!',pt1:'Pak 1 punt extra.',pt2:'Pak 2 punten extra.'};
+    w.innerHTML=`<div class="ac kennis">
+      <span class="badge kennis">☢ KENNISKAART</span>
+      <div class="cq" style="color:var(--y)">Weetje uit §6</div>
+      <div class="ktxt">${c.fact}</div>
+      <div style="font-size:11px;color:var(--y);margin-top:2px">🎁 ${bonusMap[c.bonus]||c.bonus}</div>
+      ${amHost()&&!done?`<div class="nbw"><button class="btn by bsm" onclick="hostApplyKennis()">BEGREPEN ▸</button></div>`:''}
+      ${!amHost()?`<div class="viewer-msg">Host leest de kenniskaart...</div>`:''}
+    </div>`;
+  }
+}
+
+async function hostAnswer(ch){
+  let st=await loadState();if(!st)return;
+  const c=CARDS.vraag[st.activeCard];
+  if(ch===c.ans)st.players[st.curP].points+=c.pts;
+  else st.players[st.curP].points-=1;
+  st.chosenAnswer=ch;
+  await saveState(st);localState=st;renderGame(st);
+}
+
+async function hostApplyBonus(){
+  let st=await loadState();if(!st)return;
+  const c=CARDS.bonus[st.activeCard];
+  if(c.act==='pts'){st.players[st.curP].points+=c.pts;st.pendingAction='done';await saveState(st);localState=st;renderGame(st);}
+  else if(c.act==='extra'){st.inPlay=false;st.activeCard=null;st.cardType=null;await saveState(st);localState=st;renderGame(st);}
+  else if(c.act==='extravraag'){
+    st.inPlay=false;st.activeCard=null;st.cardType=null;await saveState(st);localState=st;
+    setTimeout(()=>hostDraw('vraag'),300);
+  }
+  else if(c.act==='steal1next'){
+    st.players[st.curP].points+=c.pts;
+    const nx=(st.curP+1)%st.players.length;
+    st.players[nx].points=Math.max(-10,st.players[nx].points-1);
+    st.pendingAction='done';await saveState(st);localState=st;renderGame(st);
+  }
+  else if(c.act==='steal2'){renderStealUI(st);}
+}
+
+function renderStealUI(st){
+  const w=document.getElementById('acwrap');
+  const opts=st.players.map((p,i)=>i!==st.curP?`<button class="abtn" onclick="hostDoSteal(${i})">${p.name} (${p.points} pt)</button>`:'').join('');
+  w.innerHTML=`<div class="ac bonus"><span class="badge bonus">⭐ BONUSKAART</span><div class="cq">Kies een tegenstander om 2 punten van af te pakken:</div><div class="aopts">${opts}</div></div>`;
+}
+
+async function hostDoSteal(idx){
+  let st=await loadState();if(!st)return;
+  st.players[idx].points-=2;st.players[st.curP].points+=2;
+  await saveState(st);localState=st;
+  await hostNext();
+}
+
+async function hostChooseR(ch){
+  let st=await loadState();if(!st)return;
+  const c=CARDS.risico[st.activeCard];
+  if(ch===c.safe){st.players[st.curP].points+=2;st.risicoResult='ok';st.risicoMsg='✓ VEILIGE KEUZE! +2 punten!';}
+  else{
+    if(Math.random()>.5){st.players[st.curP].points+=4;st.risicoResult='ok';st.risicoMsg='🎲 GOKJE GEWONNEN! +4 punten!';}
+    else{st.players[st.curP].points-=3;st.risicoResult='fail';st.risicoMsg='🎲 GEVAAR! -3 punten.';}
+  }
+  st.chosenAnswer=ch;
+  await saveState(st);localState=st;renderGame(st);
+}
+
+async function hostApplyKennis(){
+  let st=await loadState();if(!st)return;
+  const c=CARDS.kennis[st.activeCard];
+  if(c.bonus==='pt1')st.players[st.curP].points+=1;
+  else if(c.bonus==='pt2')st.players[st.curP].points+=2;
+  if(c.bonus==='extravraag'||c.bonus==='extrabonus'){
+    const typ=c.bonus==='extravraag'?'vraag':'bonus';
+    st.inPlay=false;st.activeCard=null;st.cardType=null;
+    await saveState(st);localState=st;
+    setTimeout(()=>hostDraw(typ),300);
+  } else {
+    st.pendingAction='done';await saveState(st);localState=st;
+    await hostNext();
+  }
+}
+
+async function hostNext(){
+  let st=await loadState();if(!st)return;
+  st.inPlay=false;st.activeCard=null;st.cardType=null;
+  st.chosenAnswer=null;st.risicoResult=null;st.risicoMsg=null;st.pendingAction=null;
+  st.curP=(st.curP+1)%st.players.length;
+  if(st.curP===0)st.round++;
+  const allEmpty=['vraag','bonus','risico','kennis'].every(t=>st.decks[t].length===0);
+  if(allEmpty)st.gameOver=true;
+  await saveState(st);localState=st;
+  if(st.gameOver){stopPoll();showWinner(st);}else{renderGame(st);}
+}
+
+function showWinner(st){
+  stopPoll();
+  showScreen('winner');
+  const s=[...st.players].sort((a,b)=>b.points-a.points);
+  document.getElementById('wname').textContent=s[0].name.toUpperCase();
+  document.getElementById('fscores').innerHTML=s.map((p,i)=>`<div class="frow ${i===0?'first':''}"><span class="fn">${['🥇','🥈','🥉','4.','5.'][i]} ${p.name}</span><span class="fp">${p.points>0?'+':''}${p.points}</span></div>`).join('');
+}
+
+function goHome(){
+  stopPoll();gameCode='';isHost=false;myName='';myIdx=-1;localState=null;
+  showScreen('lobby');
+}
+</script>

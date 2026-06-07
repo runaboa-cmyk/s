@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "Stralingsspel Multiplayer"
+version = "1.0.0"
+id = "artifacts/stralingsspel"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 18695
+
+[services.development]
+run = "pnpm --filter @workspace/stralingsspel run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/stralingsspel", "run", "build" ]
+publicDir = "artifacts/stralingsspel/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "18695"
+BASE_PATH = "/"
